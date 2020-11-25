@@ -84,12 +84,12 @@ def temp_observations():
     return jsonify(active_station_info)
 
 @app.route("/api/v1.0/<start>")
-def temp_query1():
+def temp_query_start(start):
     
     return
 
 @app.route("/api/v1.0/<start>/<end>")
-def temp_query2():
+def temp_query_start_end():
     
     return
 
