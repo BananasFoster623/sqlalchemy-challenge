@@ -41,7 +41,8 @@ def home():
             "/api/v1.0/stations<br/>"
             "/api/v1.0/tobs<br/>"
             "/api/v1.0/start<br/>"
-            "/api/v1.0/start/end<br/>"
+            "/api/v1.0/start/end<br/><br/>"
+            "In order to get correct results, 'start' and 'end' should be input in YYYY-MM-DD format."
     )
 
 @app.route("/api/v1.0/precipitation")
