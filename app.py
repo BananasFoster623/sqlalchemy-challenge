@@ -29,6 +29,8 @@ Station = Base.classes.station
 # Create our session (link) from Python to the DB
 session = Session(engine)
 
+# Create the flask instance
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -44,7 +46,19 @@ def home():
 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-    return
+    sel = [Measurement.date]
+    last_date = session.query(*sel).order_by(Measurement.date.desc()).first()[0]
+    last_date_dtObj = dt.datetime.strptime(last_date, '%Y-%m-%d')
+    first_date_dtObj = last_date_dtObj - dt.timedelta(days=365)
+    first_date = first_date_dtObj.strftime("%Y-%m-%d")
+    sel = [Measurement.date, Measurement.prcp]
+    precipitation_results = session.query(*sel).filter(Measurement.date >= first_date).order_by(Measurement.date).all()
+    
+    precipitation_dict = {}
+    for line in precipitation_results:
+        key, value = line[0], line[1]
+        precipitation_dict[key] = value
+    return jsonify(precipitation_dict)
 
 @app.route("/api/v1.0/stations")
 def stations():
