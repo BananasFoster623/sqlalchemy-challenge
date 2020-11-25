@@ -15,22 +15,22 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect
 
 # Create the database instance
-
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+
 # reflect an existing database into a new model
 Base = automap_base()
+
 # reflect the tables
 Base.prepare(engine, reflect=True)
-# We can view all of the classes that automap found
-# Base.classes.keys() ----- don't need this since we verified it works in the jupyter notebook
+
 # Save references to each table
 Measurement = Base.classes.measurement
 Station = Base.classes.station
+
 # Create our session (link) from Python to the DB
 session = Session(engine)
 
 # Create the flask instance
-
 app = Flask(__name__)
 
 @app.route("/")
@@ -51,6 +51,7 @@ def precipitation():
     last_date_dtObj = dt.datetime.strptime(last_date, '%Y-%m-%d')
     first_date_dtObj = last_date_dtObj - dt.timedelta(days=365)
     first_date = first_date_dtObj.strftime("%Y-%m-%d")
+    
     sel = [Measurement.date, Measurement.prcp]
     precipitation_results = session.query(*sel).filter(Measurement.date >= first_date).order_by(Measurement.date).all()
     
@@ -62,18 +63,34 @@ def precipitation():
 
 @app.route("/api/v1.0/stations")
 def stations():
-    return
+    station_info = session.query(Station.station, Station.name, Station.latitude, Station.longitude, Station.elevation).all()
+    
+    return jsonify(station_info)
 
 @app.route("/api/v1.0/tobs")
 def temp_observations():
-    return
+    sel = [Measurement.date]
+    last_date = session.query(*sel).order_by(Measurement.date.desc()).first()[0]
+    last_date_dtObj = dt.datetime.strptime(last_date, '%Y-%m-%d')
+    first_date_dtObj = last_date_dtObj - dt.timedelta(days=365)
+    first_date = first_date_dtObj.strftime("%Y-%m-%d")
+ 
+    # This pulls all the station names and their associated tobs count, then sorts descending so the top value is the most active station (for the last year)
+    tobs_info = session.query(Measurement.station, func.count(Measurement.tobs), Measurement.date).filter(Measurement.date>=first_date).group_by(Measurement.station).order_by(func.count(Measurement.tobs).desc()).all()
+    most_active = tobs_info[0][0]
+
+    active_station_info = session.query(Measurement.station, Measurement.date, Measurement.tobs).filter(Measurement.station==most_active, Measurement.date>=first_date).all()
+    
+    return jsonify(active_station_info)
 
 @app.route("/api/v1.0/<start>")
 def temp_query1():
+    
     return
 
 @app.route("/api/v1.0/<start>/<end>")
 def temp_query2():
+    
     return
 
 if __name__ == "__main__":
