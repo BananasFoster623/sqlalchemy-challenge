@@ -22,7 +22,7 @@ Base = automap_base()
 # reflect the tables
 Base.prepare(engine, reflect=True)
 # We can view all of the classes that automap found
-# Base.classes.keys() ---- don't need this since we verified it works in the jupyter notebook
+# Base.classes.keys() ----- don't need this since we verified it works in the jupyter notebook
 # Save references to each table
 Measurement = Base.classes.measurement
 Station = Base.classes.station
