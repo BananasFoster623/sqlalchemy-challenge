@@ -86,7 +86,7 @@ def temp_observations():
 @app.route("/api/v1.0/<start>")
 def temp_query_start(start):
     try:
-        start_date = dt.datetime.strptime(start,"%Y-%m-%d")
+        # start_date = dt.datetime.strptime(start,"%Y-%m-%d")
         
         data = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date>=start).all()
         return_dict = {"Minimum Temperature": data[0][0], "Maximum Temperature": data[0][1], "Average Temperature": data[0][2]}
@@ -99,10 +99,10 @@ def temp_query_start(start):
 @app.route("/api/v1.0/<start>/<end>")
 def temp_query_start_end(start, end):
     try:
-        start_date = dt.datetime.strptime(start,"%Y-%m-%d")
-        end_date = dt.datetime.strptime(start,"%Y-%m-%d")
+        # start_date = dt.datetime.strptime(start,"%Y-%m-%d")
+        # end_date = dt.datetime.strptime(start,"%Y-%m-%d")
         
-        data = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date>=start_date).filter(Measurement.date<=end_date).all()
+        data = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date>=start).filter(Measurement.date<=end).all()
         return_dict = {"Minimum Temperature": data[0][0], "Maximum Temperature": data[0][1], "Average Temperature": data[0][2]}
         return jsonify(return_dict)
     except:
