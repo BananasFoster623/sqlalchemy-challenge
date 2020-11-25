@@ -85,8 +85,12 @@ def temp_observations():
 
 @app.route("/api/v1.0/<start>")
 def temp_query_start(start):
-    
-    return
+    try:
+        start_date = dt.datetime.strptime(start,"%Y-%m-%d")
+        end_date = dt.date.today()
+    except:
+        print("Incorrect Date Format --- formatting should by YYYY-MM-DD")
+    return jsonify(end_date)
 
 @app.route("/api/v1.0/<start>/<end>")
 def temp_query_start_end():
